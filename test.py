@@ -3,23 +3,23 @@ import math
 import matplotlib.pyplot as plt
 
 mmkeypoints_ar = [
-    [3.1721896e+02, 4.7955447e+02, 6.5885240e-01],
-    [3.2307602e+02, 4.8541153e+02, 6.6802812e-01],
-    [3.2307602e+02, 4.7955447e+02, 6.7749655e-01],
-    [3.3479007e+02, 4.6784048e+02, 6.9285399e-01],
-    [3.2893307e+02, 4.6784048e+02, 7.8769869e-01],
-    [3.1136197e+02, 4.5026938e+02, 6.2045842e-01],
-    [2.9964792e+02, 4.5612637e+02, 7.8962851e-01],
-    [2.8793393e+02, 5.2055371e+02, 6.5508807e-01],
-    [2.8793393e+02, 5.1469666e+02, 7.5310457e-01],
-    [2.8793393e+02, 5.9669495e+02, 6.6400248e-01],
-    [2.8793393e+02, 5.9669495e+02, 7.2509509e-01],
-    [3.0550497e+02, 3.2141489e+02, 6.3775474e-01],
-    [2.9964792e+02, 3.2727188e+02, 5.4493171e-01],
-    [3.1136197e+02, 1.9256039e+02, 8.3411884e-01],
-    [3.0550497e+02, 1.9256039e+02, 8.1357610e-01],
-    [3.1136197e+02, 9.8847992e+01, 6.1659563e-01],
-    [3.1136197e+02, 1.0470505e+02, 5.3114772e-01]
+    [73.630104, 171.40439, 0.8898602],
+    [71.989296, 168.12277, 0.91372955],
+    [70.34849, 168.12277, 0.88910663],
+    [76.911705, 163.20035, 0.86160445],
+    [70.34849, 161.55954, 0.58128905],
+    [88.39736, 156.63712, 0.81900513],
+    [83.47494, 153.3555, 0.5691762],
+    [93.319786, 179.60843, 0.8689313],
+    [86.75655, 174.686, 0.32007766],
+    [78.55251, 181.24924, 0.44380537],
+    [75.27091, 176.32681, 0.47355014],
+    [96.6014, 122.18018, 0.63075316],
+    [88.39736, 117.25776, 0.7483829],
+    [90.03817, 81.159996, 0.62998295],
+    [90.03817, 81.159996, 0.719999],
+    [86.75655, 41.780617, 0.46977988],
+    [88.39736, 41.780617, 0.48423153]
 ]
 
 name_of_points = ['head0', 'head1', 'head2', 'head3', 'head4', 'first_shoulder', 'second_shoulder', 'first_elbow',
@@ -39,7 +39,7 @@ def slope(x1, y1, x2, y2):  # Line slope given two points:
     if b != 0:
         return a / b
     else:
-        return 1
+        return 0
 
 
 def angle(s1, s2):
@@ -60,15 +60,22 @@ def get_angle_res(f_point, s_point, t_point, func, accept_threshold=0.10):
     return func((angle(slp1, slp2)), accept_threshold)
 
 
-print(
-    f"угол кисти  локти плечи  {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_elbow'], dict_of_points['first_shoulder'], accept180)}")
-print(
-    f" угол кисти плечи таз {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_shoulder'], dict_of_points['first_ass'], accept180)}")
-print(
-    f" угол кисти плечи коленки {get_angle_res(dict_of_points['first_shoulder'], dict_of_points['first_ass'], dict_of_points['first_knee'], accept180)}")
-print(
-    f" угол таз  коленки стопы {get_angle_res(dict_of_points['first_ass'], dict_of_points['first_knee'], dict_of_points['first_foot'], accept180)}")
-print(
-    f" угол кисти  таз стопы {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_ass'], dict_of_points['first_foot'], accept180)}")
-
+ac_thr_w_e_s = 0.4
+ac_thr_a_k_f = 0.5
+ac_thr_w_s_k = 0.5
+if len(mmkeypoints_ar) == 17:
+    print(
+        f"угол кисти  локти плечи  {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_elbow'], dict_of_points['first_shoulder'], accept180, ac_thr_w_e_s)}")
+    print(
+        f" угол кисти плечи таз {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_shoulder'], dict_of_points['first_ass'], accept180)}")
+    print(
+        f" угол кисти плечи коленки {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_ass'], dict_of_points['first_knee'], accept180, ac_thr_w_s_k)}")
+    print(
+        f" угол плечи  таз колени {get_angle_res(dict_of_points['first_shoulder'], dict_of_points['first_ass'], dict_of_points['first_knee'], accept180)}")
+    print(
+        f" угол таз  коленки стопы {get_angle_res(dict_of_points['first_ass'], dict_of_points['first_knee'], dict_of_points['first_foot'], accept180, ac_thr_a_k_f)}")
+    print(
+        f" угол кисти  таз стопы {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_ass'], dict_of_points['first_foot'], accept180)}")
+else:
+    print('wrong input')
 plt.show()
