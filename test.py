@@ -33,10 +33,13 @@ plt.plot(x, y, 'ro')
 plt.axis([0, 900, 900, 0])
 
 
-# plt.show()
-
 def slope(x1, y1, x2, y2):  # Line slope given two points:
-    return (y2 - y1) / (x2 - x1)
+    a = y2 - y1
+    b = x2 - x1
+    if b != 0:
+        return a / b
+    else:
+        return 1
 
 
 def angle(s1, s2):
@@ -57,5 +60,15 @@ def get_angle_res(f_point, s_point, t_point, func, accept_threshold=0.10):
     return func((angle(slp1, slp2)), accept_threshold)
 
 
-print(get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_shoulder'], dict_of_points['first_ass'],
-                    accept180))
+print(
+    f"угол кисти  локти плечи  {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_elbow'], dict_of_points['first_shoulder'], accept180)}")
+print(
+    f" угол кисти плечи таз {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_shoulder'], dict_of_points['first_ass'], accept180)}")
+print(
+    f" угол кисти плечи коленки {get_angle_res(dict_of_points['first_shoulder'], dict_of_points['first_ass'], dict_of_points['first_knee'], accept180)}")
+print(
+    f" угол таз  коленки стопы {get_angle_res(dict_of_points['first_ass'], dict_of_points['first_knee'], dict_of_points['first_foot'], accept180)}")
+print(
+    f" угол кисти  таз стопы {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_ass'], dict_of_points['first_foot'], accept180)}")
+
+plt.show()
