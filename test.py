@@ -21,25 +21,7 @@ mmkeypoints_ar = [
     [3.1136197e+02, 9.8847992e+01, 6.1659563e-01],
     [3.1136197e+02, 1.0470505e+02, 5.3114772e-01]
 ]
-# d = {
-#     'head0': ar[0],
-#     'head1': ar[1],
-#     'head2': ar[2],
-#     'head3': ar[3],
-#     'head4': ar[4],
-#     'first_shoulder': ar[5],
-#     'second_shoulder': ar[6],
-#     'first_elbow': ar[7],
-#     'second_elbow': ar[8],
-#     'first_wrist': ar[9],
-#     'second_wrist': ar[10],
-#     'first_ass': ar[11],
-#     'second_ass': ar[12],
-#     'first_knee': ar[13],
-#     'second_knee': ar[14],
-#     'first_foot': ar[15],
-#     'second_foot': ar[16],
-# }
+
 name_of_points = ['head0', 'head1', 'head2', 'head3', 'head4', 'first_shoulder', 'second_shoulder', 'first_elbow',
                   'second_elbow', 'first_wrist', 'second_wrist', 'first_ass', 'second_ass', 'first_knee', 'second_knee',
                   'first_foot', 'second_foot']
@@ -51,12 +33,7 @@ plt.plot(x, y, 'ro')
 plt.axis([0, 900, 900, 0])
 
 
-# for i_x, i_y in zip(x, y):
-#     plt.text(i_x, i_y, '({}, {})'.format(i_x, i_y))
-#
-# for k, v in dict_of_points.items():
-#     print(k, v)
-
+# plt.show()
 
 def slope(x1, y1, x2, y2):  # Line slope given two points:
     return (y2 - y1) / (x2 - x1)
@@ -74,17 +51,11 @@ def accept180(angl, thresh):
         return False
 
 
-accept_threshold = 0.10
+def get_angle_res(f_point, s_point, t_point, func, accept_threshold=0.10):
+    slp1 = slope(f_point[0], f_point[1], s_point[0], s_point[1])
+    slp2 = slope(s_point[0], s_point[1], t_point[0], t_point[1])
+    return func((angle(slp1, slp2)), accept_threshold)
 
-lineA = ((dict_of_points['first_wrist'][0], dict_of_points['first_wrist'][1]),
-         (dict_of_points['first_shoulder'][0], dict_of_points['first_shoulder'][1]))
-lineB = (((dict_of_points['first_shoulder'][0], dict_of_points['first_shoulder'][1])),
-         (dict_of_points['first_ass'][0], dict_of_points['first_ass'][1]))
 
-slp1 = slope(lineA[0][0], lineA[0][1], lineA[1][0], lineA[1][1])
-slp2 = slope(lineB[0][0], lineB[0][1], lineB[1][0], lineB[1][1])
-
-ang = angle(slp1, slp2)
-print(accept180(ang, accept_threshold))
-
-# plt.show()
+print(get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_shoulder'], dict_of_points['first_ass'],
+                    accept180))
