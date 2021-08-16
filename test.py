@@ -1,39 +1,8 @@
 import math
-
 import matplotlib.pyplot as plt
 
-mmkeypoints_ar = [
-    [73.630104, 171.40439, 0.8898602],
-    [71.989296, 168.12277, 0.91372955],
-    [70.34849, 168.12277, 0.88910663],
-    [76.911705, 163.20035, 0.86160445],
-    [70.34849, 161.55954, 0.58128905],
-    [88.39736, 156.63712, 0.81900513],
-    [83.47494, 153.3555, 0.5691762],
-    [93.319786, 179.60843, 0.8689313],
-    [86.75655, 174.686, 0.32007766],
-    [78.55251, 181.24924, 0.44380537],
-    [75.27091, 176.32681, 0.47355014],
-    [96.6014, 122.18018, 0.63075316],
-    [88.39736, 117.25776, 0.7483829],
-    [90.03817, 81.159996, 0.62998295],
-    [90.03817, 81.159996, 0.719999],
-    [86.75655, 41.780617, 0.46977988],
-    [88.39736, 41.780617, 0.48423153]
-]
-
-name_of_points = ['head0', 'head1', 'head2', 'head3', 'head4', 'first_shoulder', 'second_shoulder', 'first_elbow',
-                  'second_elbow', 'first_wrist', 'second_wrist', 'first_ass', 'second_ass', 'first_knee', 'second_knee',
-                  'first_foot', 'second_foot']
-dict_of_points = {k: v for k, v in zip(name_of_points, mmkeypoints_ar)}
-
-x = [point[0] for point in dict_of_points.values()]
-y = [point[1] for point in dict_of_points.values()]
-plt.plot(x, y, 'ro')
-plt.axis([0, 900, 900, 0])
-
-
 def slope(x1, y1, x2, y2):  # Line slope given two points:
+    """Two points slope"""
     a = y2 - y1
     b = x2 - x1
     if b != 0:
@@ -41,8 +10,8 @@ def slope(x1, y1, x2, y2):  # Line slope given two points:
     else:
         return 0
 
-
 def angle(s1, s2):
+    """Angle bw two cartesian vectors"""
     return round(math.degrees(math.atan((s2 - s1) / (1 + (s2 * s1)))), 2)
 
 
@@ -53,29 +22,82 @@ def accept180(angl, thresh):
     else:
         return False
 
+class AngleCheck:
+    """
+        Current notations:
+        WES - Wrist-Elbow-Shoulder
+        WSH - Wrist-Shoulder-Hip
+        WSK - Wrist-Shoulder-Knee
+        SHK - Shoulder-Hip-Knee
+        HKA - Hip-Knee-Ankle
+        WHA - Wrist-Hip-Ankle
+    """
+    
+    def __init__(self, data, plot=False):
+        self.data = data
+        self.plot = plot
+        self.name_of_points = ['head0', 'head1', 'head2', 'head3', 'head4', 'first_shoulder', 'second_shoulder', 
+                  'first_elbow','second_elbow', 'first_wrist', 'second_wrist', 'first_ass', 
+                  'second_ass', 'first_knee', 'second_knee','first_foot', 'second_foot']
+        
+    def get_ang_res(self, f_point, s_point, t_point, func, accept_threshold=0.10, plot=False):
+        slp1 = slope(f_point[0], f_point[1], s_point[0], s_point[1])
+        slp2 = slope(s_point[0], s_point[1], t_point[0], t_point[1])
 
-def get_angle_res(f_point, s_point, t_point, func, accept_threshold=0.10):
-    slp1 = slope(f_point[0], f_point[1], s_point[0], s_point[1])
-    slp2 = slope(s_point[0], s_point[1], t_point[0], t_point[1])
-    return func((angle(slp1, slp2)), accept_threshold)
+        if self.plot:
+            fig, ax = plt.subplots()
+            scat = ax.scatter(self.x, self.y)
+            fig.canvas.draw()
+            ax.set_xlim(0,700)
+            ax.set_ylim(700,0)
+            plt.scatter(f_point[0], f_point[1], c='red', s=30)
+            plt.scatter(s_point[0], s_point[1], c='red', s=30)
+            plt.scatter(t_point[0], t_point[1], c='red', s=30)
+            plt.show()
+
+        return func((angle(slp1, slp2)), accept_threshold)
+    
+    def calculate(self, thr):
+        kpnts = {k: v for k, v in zip(self.name_of_points, self.data)}
+        self.x = [point[0] for point in kpnts.values()]
+        self.y = [point[1] for point in kpnts.values()]
+
+        if len(self.data) == 17:
+            print(f"WES angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_elbow'], kpnts['first_shoulder'], accept180, thr[1])}")
+            print(f"WSH angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_shoulder'], kpnts['first_ass'], accept180, thr[0])}")
+            print(f"WSK angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_knee'], accept180, thr[3])}")
+            print(f"SHK angle {self.get_ang_res(kpnts['first_shoulder'], kpnts['first_ass'], kpnts['first_knee'], accept180, thr[0])}")
+            print(f"HKA angle {self.get_ang_res(kpnts['first_ass'], kpnts['first_knee'], kpnts['first_foot'], accept180, thr[3])}")
+            print(f"WHA angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_foot'], accept180, thr[0])}")
+        else:
+            print('wrong input')
+  
 
 
-ac_thr_w_e_s = 0.4
-ac_thr_a_k_f = 0.5
-ac_thr_w_s_k = 0.5
-if len(mmkeypoints_ar) == 17:
-    print(
-        f"угол кисти  локти плечи  {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_elbow'], dict_of_points['first_shoulder'], accept180, ac_thr_w_e_s)}")
-    print(
-        f" угол кисти плечи таз {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_shoulder'], dict_of_points['first_ass'], accept180)}")
-    print(
-        f" угол кисти плечи коленки {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_ass'], dict_of_points['first_knee'], accept180, ac_thr_w_s_k)}")
-    print(
-        f" угол плечи  таз колени {get_angle_res(dict_of_points['first_shoulder'], dict_of_points['first_ass'], dict_of_points['first_knee'], accept180)}")
-    print(
-        f" угол таз  коленки стопы {get_angle_res(dict_of_points['first_ass'], dict_of_points['first_knee'], dict_of_points['first_foot'], accept180, ac_thr_a_k_f)}")
-    print(
-        f" угол кисти  таз стопы {get_angle_res(dict_of_points['first_wrist'], dict_of_points['first_ass'], dict_of_points['first_foot'], accept180)}")
-else:
-    print('wrong input')
-plt.show()
+            
+data = [
+            [313.9518    , 489.6005    ,   0.7283645 ],
+            [320.12283   , 489.6005    ,   0.6645787 ],
+            [313.9518    , 489.6005    ,   0.72944766],
+            [332.46487   , 471.08743   ,   0.66028035],
+            [326.29385   , 477.25845   ,   0.82653844],
+            [307.7808    , 446.40335   ,   0.6953033 ],
+            [301.60977   , 446.40335   ,   0.78552604],
+            [289.26773   , 520.45557   ,   0.7425771 ],
+            [289.26773   , 520.45557   ,   0.74586296],
+            [283.0967    , 594.5078    ,   0.7675216 ],
+            [283.0967    , 594.5078    ,   0.76537216],
+            [301.60977   , 329.1539    ,   0.66259456],
+            [307.7808    , 341.49594   ,   0.61462903],
+            [307.7808    , 193.39139   ,   0.818356  ],
+            [307.7808    , 193.39139   ,   0.7711457 ],
+            [307.7808    , 100.82608   ,   0.63019484],
+            [313.9518    , 100.82608   ,   0.60619974]
+        ]
+
+ac_thr = 0.1
+ac_thr_wes = 0.4
+ac_thr_akf = 0.5
+ac_thr_wsk = 0.5
+
+AngleCheck(data, True).calculate([ac_thr, ac_thr_wes, ac_thr_akf, ac_thr_wsk])
