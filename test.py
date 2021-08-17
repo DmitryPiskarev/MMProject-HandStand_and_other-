@@ -27,7 +27,6 @@ def angle(pnt):
 
 def accept180(angl, thresh):
     # Accept position if the angle is less than 180 degrees multiplied by accept_threshold
-    print(abs(angl))
     if (180-abs(angl)) < thresh * 180:
         return True
     else:
@@ -65,7 +64,7 @@ class AngleCheck:
             plt.show()
         
         # Deviation
-        deviation180 = 180 - abs(angle([f_point, s_point, t_point]))
+        deviation180 = round(180 - abs(angle([f_point, s_point, t_point])), 2)
 
         return func((angle([f_point, s_point, t_point])), accept_threshold), deviation180
     
