@@ -29,3 +29,6 @@ print(df.max())
 print('--------------------')
 print('Min values:')
 print(df.min())
+
+print('Final thresholds:')
+print(df.median()/180)
