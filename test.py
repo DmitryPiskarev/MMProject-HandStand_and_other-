@@ -2,8 +2,6 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-list_of_angles = []
-
 
 # def slope(x1, y1, x2, y2):  # Line slope given two points:
 #     """Two points slope"""
@@ -54,6 +52,7 @@ class AngleCheck:
         self.name_of_points = ['head0', 'head1', 'head2', 'head3', 'head4', 'first_shoulder', 'second_shoulder',
                                'first_elbow', 'second_elbow', 'first_wrist', 'second_wrist', 'first_ass',
                                'second_ass', 'first_knee', 'second_knee', 'first_foot', 'second_foot']
+        self.list_of_angles = []
 
     def get_ang_res(self, f_point, s_point, t_point, func, accept_threshold=0.10, plot=False):
 
@@ -70,7 +69,7 @@ class AngleCheck:
 
         # Deviation
         deviation180 = round(180 - abs(angle([f_point, s_point, t_point])), 2)
-        list_of_angles.append(angle([f_point, s_point, t_point]))
+        self.list_of_angles.append(angle([f_point, s_point, t_point]))
 
         return func((angle([f_point, s_point, t_point])), accept_threshold), deviation180
 
@@ -95,24 +94,24 @@ class AngleCheck:
 
             # while res are important develop
             dict_of_angles = {
-                'WES angle': [list_of_angles[0],
+                'WES angle': [self.list_of_angles[0],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_elbow'], kpnts['first_shoulder'],
                                                accept180, thr[0])],
-                'WSH angle': [list_of_angles[1],
+                'WSH angle': [self.list_of_angles[1],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_shoulder'], kpnts['first_ass'],
                                                accept180,
                                                thr[0])],
-                'WSK angle': [list_of_angles[2],
+                'WSK angle': [self.list_of_angles[2],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_knee'], accept180,
                                                thr[0])],
-                'SHK angle': [list_of_angles[3],
+                'SHK angle': [self.list_of_angles[3],
                               self.get_ang_res(kpnts['first_shoulder'], kpnts['first_ass'], kpnts['first_knee'],
                                                accept180,
                                                thr[0])],
-                'HKA angle': [list_of_angles[4],
+                'HKA angle': [self.list_of_angles[4],
                               self.get_ang_res(kpnts['first_ass'], kpnts['first_knee'], kpnts['first_foot'], accept180,
                                                thr[0])],
-                'WHA angle': [list_of_angles[5],
+                'WHA angle': [self.list_of_angles[5],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_foot'], accept180,
                                                thr[0])],
 
@@ -126,23 +125,23 @@ class AngleCheck:
 
 
 data = [
-    [6.1247400e+02, 5.6119800e+02, 5.6512153e-01],
-    [6.0234448e+02, 5.6119800e+02, 6.5043628e-01],
-    [6.0234448e+02, 5.5613330e+02, 5.8616900e-01],
-    [5.9727979e+02, 5.6119800e+02, 7.0427775e-01],
-    [5.9727979e+02, 5.4093921e+02, 6.6702402e-01],
-    [6.1753870e+02, 5.2574512e+02, 6.2424767e-01],
-    [6.2260339e+02, 5.1561572e+02, 5.7441771e-01],
-    [6.3779749e+02, 5.9158618e+02, 7.6481462e-01],
-    [6.4286218e+02, 5.9158618e+02, 7.7132070e-01],
-    [6.4286218e+02, 6.5742737e+02, 8.8724595e-01],
-    [6.4286218e+02, 6.5236267e+02, 7.9751813e-01],
-    [6.4792688e+02, 4.3458047e+02, 6.1865437e-01],
-    [6.4286218e+02, 4.2445108e+02, 6.0301185e-01],
-    [6.3273279e+02, 3.0796304e+02, 7.3784757e-01],
-    [6.3273279e+02, 3.1302774e+02, 7.5433332e-01],
-    [5.9727979e+02, 2.2692776e+02, 5.5911881e-01],
-    [5.9727979e+02, 2.2186307e+02, 5.3995210e-01]
+    [2.2852112e+01, 4.4085107e+02, 9.2905760e-01],
+    [2.2852112e+01, 4.3642249e+02, 7.2721934e-01],
+    [2.2852112e+01, 4.3642249e+02, 9.5708144e-01],
+    [2.9236374e+00, 4.3420819e+02, 7.3028135e-01],
+    [1.6209282e+01, 4.3642249e+02, 9.5176470e-01],
+    [5.1379089e+00, 4.6077954e+02, 5.9542584e-01],
+    [2.2852112e+01, 4.6299377e+02, 8.8409925e-01],
+    [2.2852112e+01, 4.8956506e+02, 3.4178093e-01],
+    [3.3923477e+01, 4.9842218e+02, 9.5276344e-01],
+    [2.2852112e+01, 4.5192242e+02, 2.8219289e-01],
+    [3.8352020e+01, 4.8956506e+02, 6.5208131e-01],
+    [5.1379089e+00, 5.2499347e+02, 5.2827275e-01],
+    [1.1780731e+01, 5.2720776e+02, 7.5720334e-01],
+    [5.1379089e+00, 5.7592181e+02, 6.9049054e-01],
+    [1.6209282e+01, 5.7370752e+02, 8.6312115e-01],
+    [2.9236374e+00, 6.2242157e+02, 8.0288780e-01],
+    [7.0935822e-01, 6.1135016e+02, 4.8813617e-01]
 ]
 
 ac_thr = 0.1
