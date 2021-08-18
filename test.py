@@ -72,6 +72,7 @@ class AngleCheck:
         self.list_of_angles.append(angle([f_point, s_point, t_point]))
 
         return func((angle([f_point, s_point, t_point])), accept_threshold), deviation180
+    
 
     def calculate(self, thr):
         kpnts = {k: v for k, v in zip(self.name_of_points, self.data)}
@@ -82,15 +83,15 @@ class AngleCheck:
             print(
                 f"WES angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_elbow'], kpnts['first_shoulder'], accept180, thr[0])}")
             print(
-                f"WSH angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_shoulder'], kpnts['first_ass'], accept180, thr[0])}")
+                f"WSH angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_shoulder'], kpnts['first_ass'], accept180, thr[1])}")
             print(
-                f"WSK angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_knee'], accept180, thr[0])}")
+                f"WSK angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_knee'], accept180, thr[2])}")
             print(
-                f"SHK angle {self.get_ang_res(kpnts['first_shoulder'], kpnts['first_ass'], kpnts['first_knee'], accept180, thr[0])}")
+                f"SHK angle {self.get_ang_res(kpnts['first_shoulder'], kpnts['first_ass'], kpnts['first_knee'], accept180, thr[3])}")
             print(
-                f"HKA angle {self.get_ang_res(kpnts['first_ass'], kpnts['first_knee'], kpnts['first_foot'], accept180, thr[0])}")
+                f"HKA angle {self.get_ang_res(kpnts['first_ass'], kpnts['first_knee'], kpnts['first_foot'], accept180, thr[4])}")
             print(
-                f"WHA angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_foot'], accept180, thr[0])}")
+                f"WHA angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_foot'], accept180, thr[5])}")
 
             # while res are important develop
             dict_of_angles = {
@@ -100,53 +101,60 @@ class AngleCheck:
                 'WSH angle': [self.list_of_angles[1],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_shoulder'], kpnts['first_ass'],
                                                accept180,
-                                               thr[0])],
+                                               thr[1])],
                 'WSK angle': [self.list_of_angles[2],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_knee'], accept180,
-                                               thr[0])],
+                                               thr[2])],
                 'SHK angle': [self.list_of_angles[3],
                               self.get_ang_res(kpnts['first_shoulder'], kpnts['first_ass'], kpnts['first_knee'],
                                                accept180,
-                                               thr[0])],
+                                               thr[3])],
                 'HKA angle': [self.list_of_angles[4],
                               self.get_ang_res(kpnts['first_ass'], kpnts['first_knee'], kpnts['first_foot'], accept180,
-                                               thr[0])],
+                                               thr[4])],
                 'WHA angle': [self.list_of_angles[5],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_foot'], accept180,
-                                               thr[0])],
+                                               thr[5])],
 
             }
-            # with open("angeles.txt", "a") as file:
-            #     file.write(f'{dict_of_angles}\n\n')
-            #     file.close()
+#             with open("angeles.txt", "a") as file:
+#                 file.write(f'{dict_of_angles}\n\n')
+#                 file.close()
             print(dict_of_angles)
         else:
             print('wrong input')
+            
+            
+# Suspicious WES angle 29, 30, 32, 36, 37, 38(less), 41 43, 44, 45, 46, 48
+# Suspicious WSH angle 34, 36, 42, 45
+# Suspicious HKA angle 41
+# Suspicious SHK angle 47
+
+data = [[ 40.03208   , 124.01081   ,   0.8453804 ],
+       [ 37.151375  , 122.57044   ,   0.80337894],
+       [ 37.151375  , 124.01081   ,   0.84347403],
+       [ 35.71102   , 116.80903   ,   0.8963101 ],
+       [ 34.270668  , 115.36869   ,   0.6300535 ],
+       [ 41.472435  , 108.16691   ,   0.8087631 ],
+       [ 41.472435  , 106.72657   ,   0.6220643 ],
+       [ 45.793495  , 126.89152   ,   0.8191618 ],
+       [ 45.793495  , 126.89152   ,   0.7553381 ],
+       [ 44.35314   , 147.05646   ,   0.85301363],
+       [ 44.35314   , 147.05646   ,   0.80053496],
+       [ 40.03208   ,  73.59843   ,   0.72605896],
+       [ 40.03208   ,  72.15809   ,   0.7087054 ],
+       [ 40.03208   ,  46.231728  ,   0.5841695 ],
+       [ 37.151375  ,  44.791374  ,   0.63503903],
+       [ 38.59173   ,  20.305367  ,   0.5414063 ],
+       [ 38.59173   ,  21.74572   ,   0.68132   ]]
 
 
-data = [
-    [2.2852112e+01, 4.4085107e+02, 9.2905760e-01],
-    [2.2852112e+01, 4.3642249e+02, 7.2721934e-01],
-    [2.2852112e+01, 4.3642249e+02, 9.5708144e-01],
-    [2.9236374e+00, 4.3420819e+02, 7.3028135e-01],
-    [1.6209282e+01, 4.3642249e+02, 9.5176470e-01],
-    [5.1379089e+00, 4.6077954e+02, 5.9542584e-01],
-    [2.2852112e+01, 4.6299377e+02, 8.8409925e-01],
-    [2.2852112e+01, 4.8956506e+02, 3.4178093e-01],
-    [3.3923477e+01, 4.9842218e+02, 9.5276344e-01],
-    [2.2852112e+01, 4.5192242e+02, 2.8219289e-01],
-    [3.8352020e+01, 4.8956506e+02, 6.5208131e-01],
-    [5.1379089e+00, 5.2499347e+02, 5.2827275e-01],
-    [1.1780731e+01, 5.2720776e+02, 7.5720334e-01],
-    [5.1379089e+00, 5.7592181e+02, 6.9049054e-01],
-    [1.6209282e+01, 5.7370752e+02, 8.6312115e-01],
-    [2.9236374e+00, 6.2242157e+02, 8.0288780e-01],
-    [7.0935822e-01, 6.1135016e+02, 4.8813617e-01]
-]
+ac_thr_wes = 0.150 ### expertly
+ac_thr_wsh = 0.037
+ac_thr_wsk = 0.019
+ac_thr_shk = 0.026
+ac_thr_hka = 0.027
+ac_thr_wha = 0.018
 
-ac_thr = 0.1
-# ac_thr_wes = 0.4
-# ac_thr_akf = 0.5
-# ac_thr_wsk = 0.5
-
-AngleCheck(data, False).calculate([ac_thr])
+AngleCheck(data, False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk, 
+                                   ac_thr_shk, ac_thr_hka, ac_thr_wha])
