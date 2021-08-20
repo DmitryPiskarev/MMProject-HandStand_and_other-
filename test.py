@@ -149,12 +149,19 @@ data = [[ 40.03208   , 124.01081   ,   0.8453804 ],
        [ 38.59173   ,  21.74572   ,   0.68132   ]]
 
 
-ac_thr_wes = 0.150 ### expertly
-ac_thr_wsh = 0.037
-ac_thr_wsk = 0.019
-ac_thr_shk = 0.026
-ac_thr_hka = 0.027
-ac_thr_wha = 0.018
+thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015], # Median
+              'conservative': [0.2, 0.06, 0.034, 0.048, 0.064, 0.031], # Median + Standard deviation
+              'week': [0.323, 0.088, 0.049, 0.069, 0.101, 0.047]} # Median + 2xStandard deviation
+
+# Previous thresholds' values
+# ac_thr_wes = 0.150
+# ac_thr_wsh = 0.037
+# ac_thr_wsk = 0.019
+# ac_thr_shk = 0.026
+# ac_thr_hka = 0.027
+# ac_thr_wha = 0.018
+
+ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['strict']
 
 AngleCheck(data, False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk, 
                                    ac_thr_shk, ac_thr_hka, ac_thr_wha])
