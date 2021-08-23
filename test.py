@@ -1,12 +1,22 @@
 import subprocess
 import re
+import os
 from keypoint_classes import AngleCheck
+import filters
+from PIL import Image
+import cv2
 
-mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
-# mmpose_dir = '/home/dima/mmpose'
-img_root = 'demo/resources/img/'
+mmpose_dir = '/home/dmitriy/mmcv/mmpose'
+img_root = 'own_videos/'
 img = 'tst_img1.png'
-img_out = 'vis_results'
+img_out = 'vis_results/'
+f_root = 'own_videos/media/'
+
+# filter to test
+ftypes = {99:'NO', 0:'CLAHE', 1:'GRAY', 2:'MEDIANBLUR', 3:'GRAY_HSV'}
+ft = 1
+
+img_new = resized_and_filtered([mmpose_dir, img_root, img, f_root], ftypes[ft])
 
 # data = [[91.063324, 272.36313, 0.8157366],
 #         [84.76651, 272.36313, 0.8523694],
@@ -31,19 +41,13 @@ thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015],  # Median
               'week': [0.323, 0.088, 0.049, 0.069, 0.101, 0.047]}  # Median + 2xStandard deviation
 
 # Previous thresholds' values
-# ac_thr_wes = 0.150
-# ac_thr_wsh = 0.037
-# ac_thr_wsk = 0.019
-# ac_thr_shk = 0.026
-# ac_thr_hka = 0.027
-# ac_thr_wha = 0.018
+# ac_thr_wes = 0.150 ac_thr_wsh = 0.037 ac_thr_wsk = 0.019 ac_thr_shk = 0.026
+# ac_thr_hka = 0.027 ac_thr_wha = 0.018
 
 ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['conservative']
 
-# take data from mmpose
-
-
-mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, img_root, img, img_out])
+# retrieve data from mmpose
+mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, f_root, img_new, img_out])
 
 string_mm = mmpose_out_dataset_str.decode()
 arr_of_strings = string_mm.replace("\n", "").replace(" ", "").split("}")
@@ -63,5 +67,12 @@ if arr_of_keypoint_str:
 
     AngleCheck(data_data[0], False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk,
                                                ac_thr_shk, ac_thr_hka, ac_thr_wha])
+    
+    img_in = Image.open(f'{mmpose_dir}/{img_root}/{img}')
+    img_in_f = Image.open(f'{mmpose_dir}/{f_root}/{img_new}')
+    img_out = Image.open(f'{mmpose_dir}/{img_out}/vis_{img_new}')
+    img_in.show()
+    img_in_f.show()
+    img_out.show()
 else:
     print(string_mm)
