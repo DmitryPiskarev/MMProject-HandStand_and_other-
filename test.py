@@ -1,6 +1,7 @@
 import subprocess
 import re
 from keypoint_classes import AngleCheck
+from PIL import Image
 
 mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
 # mmpose_dir = '/home/dima/mmpose'
@@ -63,5 +64,9 @@ if arr_of_keypoint_str:
 
     AngleCheck(data_data[0], False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk,
                                                ac_thr_shk, ac_thr_hka, ac_thr_wha])
+    img_in = Image.open(f'{mmpose_dir}/{img_root}/{img}')
+    img_out = Image.open(f'{mmpose_dir}/{img_out}/vis_{img}')
+    img_in.show()
+    img_out.show()
 else:
     print(string_mm)
