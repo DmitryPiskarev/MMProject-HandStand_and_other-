@@ -4,6 +4,12 @@ import numpy as np
 import subprocess
 import re
 
+mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
+# mmpose_dir = '/home/dima/mmpose'
+img_root = 'demo/resources/img/'
+img = 'tst_img1.png'
+img_out = 'vis_results'
+
 
 # def slope(x1, y1, x2, y2):  # Line slope given two points:
 #     """Two points slope"""
@@ -166,7 +172,7 @@ ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresho
 # take data from mmpose
 
 
-mmpose_out_dataset_str = subprocess.check_output(["./subscript"])
+mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, img_root, img, img_out])
 
 string_mm = mmpose_out_dataset_str.decode()
 # print(string_mm)
@@ -186,4 +192,4 @@ for y in arr_of_keypoint_str:
         data_data.append(s_ar)
 
 AngleCheck(data_data[0], False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk,
-                                   ac_thr_shk, ac_thr_hka, ac_thr_wha])
+                                           ac_thr_shk, ac_thr_hka, ac_thr_wha])
