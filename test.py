@@ -1,6 +1,8 @@
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import subprocess
+import re
 
 
 # def slope(x1, y1, x2, y2):  # Line slope given two points:
@@ -72,7 +74,6 @@ class AngleCheck:
         self.list_of_angles.append(angle([f_point, s_point, t_point]))
 
         return func((angle([f_point, s_point, t_point])), accept_threshold), deviation180
-    
 
     def calculate(self, thr):
         kpnts = {k: v for k, v in zip(self.name_of_points, self.data)}
@@ -117,41 +118,40 @@ class AngleCheck:
                                                thr[5])],
 
             }
-#             with open("angeles.txt", "a") as file:
-#                 file.write(f'{dict_of_angles}\n\n')
-#                 file.close()
+            #             with open("angeles.txt", "a") as file:
+            #                 file.write(f'{dict_of_angles}\n\n')
+            #                 file.close()
             print(dict_of_angles)
         else:
             print('wrong input')
-            
-            
+
+
 # Suspicious WES angle 29, 30, 32, 36, 37, 38(less), 41 43, 44, 45, 46, 48
 # Suspicious WSH angle 34, 36, 42, 45
 # Suspicious HKA angle 41
 # Suspicious SHK angle 47
 
-data = [[ 40.03208   , 124.01081   ,   0.8453804 ],
-       [ 37.151375  , 122.57044   ,   0.80337894],
-       [ 37.151375  , 124.01081   ,   0.84347403],
-       [ 35.71102   , 116.80903   ,   0.8963101 ],
-       [ 34.270668  , 115.36869   ,   0.6300535 ],
-       [ 41.472435  , 108.16691   ,   0.8087631 ],
-       [ 41.472435  , 106.72657   ,   0.6220643 ],
-       [ 45.793495  , 126.89152   ,   0.8191618 ],
-       [ 45.793495  , 126.89152   ,   0.7553381 ],
-       [ 44.35314   , 147.05646   ,   0.85301363],
-       [ 44.35314   , 147.05646   ,   0.80053496],
-       [ 40.03208   ,  73.59843   ,   0.72605896],
-       [ 40.03208   ,  72.15809   ,   0.7087054 ],
-       [ 40.03208   ,  46.231728  ,   0.5841695 ],
-       [ 37.151375  ,  44.791374  ,   0.63503903],
-       [ 38.59173   ,  20.305367  ,   0.5414063 ],
-       [ 38.59173   ,  21.74572   ,   0.68132   ]]
+# data = [[91.063324, 272.36313, 0.8157366],
+#         [84.76651, 272.36313, 0.8523694],
+#         [91.063324, 278.65994, 0.79907167],
+#         [84.76651, 266.0663, 0.8775567],
+#         [97.36014, 272.36313, 0.6498351],
+#         [94.21173, 247.17587, 0.6690098],
+#         [106.805374, 262.9179, 0.7052514],
+#         [97.36014, 291.2536, 0.56708306],
+#         [97.36014, 291.2536, 0.86998916],
+#         [97.36014, 332.18292, 0.68419474],
+#         [94.21173, 332.18292, 0.82392687],
+#         [97.36014, 168.4657, 0.6219564],
+#         [103.65695, 168.4657, 0.67523414],
+#         [103.65695, 105.49753, 0.7835887],
+#         [103.65695, 105.49753, 0.68537617],
+#         [103.65695, 48.82617, 0.6098028],
+#         [106.805374, 51.97458, 0.5526638]]
 
-
-thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015], # Median
-              'conservative': [0.2, 0.06, 0.034, 0.048, 0.064, 0.031], # Median + Standard deviation
-              'week': [0.323, 0.088, 0.049, 0.069, 0.101, 0.047]} # Median + 2xStandard deviation
+thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015],  # Median
+              'conservative': [0.2, 0.06, 0.034, 0.048, 0.064, 0.031],  # Median + Standard deviation
+              'week': [0.323, 0.088, 0.049, 0.069, 0.101, 0.047]}  # Median + 2xStandard deviation
 
 # Previous thresholds' values
 # ac_thr_wes = 0.150
@@ -161,7 +161,29 @@ thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015], # Median
 # ac_thr_hka = 0.027
 # ac_thr_wha = 0.018
 
-ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['strict']
+ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['conservative']
 
-AngleCheck(data, False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk, 
+# take data from mmpose
+
+
+mmpose_out_dataset_str = subprocess.check_output(["./subscript"])
+
+string_mm = mmpose_out_dataset_str.decode()
+# print(string_mm)
+arr_of_strings = string_mm.replace("\n", "").replace(" ", "").split("}")
+re_rule_f = '\'keypoints\':array\(.*?\)'
+re_rule_s = '\[(.+?)\]'
+arr_of_keypoint_str = []
+data_data = []
+for x in arr_of_strings:
+    arr_of_keypoint_str.append(re.findall(re_rule_f, x))
+
+for y in arr_of_keypoint_str:
+    if y:
+        substring_arr = re.findall(re_rule_s, y[0])
+        substring_arr[0] = substring_arr[0].replace('[', '')
+        s_ar = [list(map(float, (x.split(',')))) for x in substring_arr]
+        data_data.append(s_ar)
+
+AngleCheck(data_data[0], False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk,
                                    ac_thr_shk, ac_thr_hka, ac_thr_wha])
