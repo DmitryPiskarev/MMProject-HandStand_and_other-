@@ -6,14 +6,18 @@ from filters import *
 from PIL import Image
 import cv2
 
-mmpose_dir = '/home/dmitriy/mmcv/mmpose'
-img_root = 'own_videos/'
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+# Dima dont touch! ONLY COMMENT!!!!!  :))
+mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
+# mmpose_dir = '/home/dmitriy/mmcv/mmpose'
+
+img_root = os.path.join(BASE_DIR, 'media/good_img')
+f_root = os.path.join(BASE_DIR, 'media/filtered')
+img_out = os.path.join(BASE_DIR, 'media/out_img')
 img = 'tst_img1.png'
-img_out = 'vis_results/'
-f_root = 'own_videos/media/'
 
 # filter to test
-ftypes = {99:'NO', 0:'CLAHE', 1:'GRAY', 2:'MEDIANBLUR', 3:'GRAY_HSV'}
+ftypes = {99: 'NO', 0: 'CLAHE', 1: 'GRAY', 2: 'MEDIANBLUR', 3: 'GRAY_HSV'}
 ft = 2
 
 img_new = resized_and_filtered([mmpose_dir, img_root, img, f_root], ftypes[ft])
@@ -68,10 +72,9 @@ if arr_of_keypoint_str:
     AngleCheck(data_data[0], False).calculate([ac_thr_wes, ac_thr_wsh, ac_thr_wsk,
                                                ac_thr_shk, ac_thr_hka, ac_thr_wha])
 
-    
-    img_in = Image.open(f'{mmpose_dir}/{img_root}/{img}')
-    img_in_f = Image.open(f'{mmpose_dir}/{f_root}/{img_new}')
-    img_out = Image.open(f'{mmpose_dir}/{img_out}/vis_{img_new}')
+    img_in = Image.open(f'{img_root}/{img}')
+    img_in_f = Image.open(f'{f_root}/{img_new}')
+    img_out = Image.open(f'{img_out}/vis_{img_new}')
     img_in.show()
     img_in_f.show()
     img_out.show()
