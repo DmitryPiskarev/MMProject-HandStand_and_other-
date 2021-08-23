@@ -2,7 +2,7 @@ import subprocess
 import re
 import os
 from keypoint_classes import AngleCheck
-import filters
+from filters import *
 from PIL import Image
 import cv2
 
@@ -14,7 +14,7 @@ f_root = 'own_videos/media/'
 
 # filter to test
 ftypes = {99:'NO', 0:'CLAHE', 1:'GRAY', 2:'MEDIANBLUR', 3:'GRAY_HSV'}
-ft = 1
+ft = 2
 
 img_new = resized_and_filtered([mmpose_dir, img_root, img, f_root], ftypes[ft])
 

@@ -1,4 +1,5 @@
 import cv2
+import os
 
 def resized_and_filtered(dirs, fltr_type):
     """
@@ -47,7 +48,7 @@ def resized_and_filtered(dirs, fltr_type):
     else:
         final = output
     
-    out_name = '{}_{}_{}.png'.format(img.split('.')[0], scale_pct, fltr_type)
+    out_name = '{}_{}_{}.png'.format(dirs[2].split('.')[0], scale_pct, fltr_type)
     if not cv2.imwrite(os.path.join(dirs[0], dirs[3],'{}'.format(out_name)), final):
         raise Exception("Could not write image")
     
