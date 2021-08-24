@@ -7,13 +7,22 @@ from PIL import Image
 import cv2
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+img_root = os.path.join(BASE_DIR, 'media/good_img')
+
+
 # Dima dont touch! ONLY COMMENT!!!!!  :))
 mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
 # mmpose_dir = '/home/dmitriy/mmcv/mmpose'
+my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
 
-img_root = os.path.join(BASE_DIR, 'media/good_img')
-f_root = os.path.join(BASE_DIR, 'media/filtered')
-img_out = os.path.join(BASE_DIR, 'media/out_img')
+
+
+# f_root = os.path.join(BASE_DIR, 'media/filtered')
+# img_out = os.path.join(BASE_DIR, 'media/out_img')
+
+f_root = os.path.join(my_dir, 'media/filtered')
+img_out = os.path.join(my_dir, 'media/out_img')
+
 img = 'tst_img1.png'
 
 # filter to test
