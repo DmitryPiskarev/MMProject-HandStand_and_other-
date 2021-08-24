@@ -1,5 +1,7 @@
 import cv2
 import os
+from PIL import ImageFilter, Image
+import numpy as np
 
 
 def resized_and_filtered(dirs, fltr_type):
@@ -11,7 +13,7 @@ def resized_and_filtered(dirs, fltr_type):
     src = cv2.imread(os.path.join(dirs[0], dirs[1], dirs[2]), cv2.IMREAD_UNCHANGED)
     # percent by which the image is resized
     max_image_height = 500
-    scale_pct = int(max_image_height / src.shape[0])
+    scale_pct = float(max_image_height / src.shape[0])
     # calculate the 50 percent of original dimensions
     width = int(src.shape[1] * scale_pct)
     height = int(src.shape[0] * scale_pct)
@@ -39,13 +41,24 @@ def resized_and_filtered(dirs, fltr_type):
 
     elif fltr_type == 'MEDIANBLUR':
         # -----Making blured image---------------------------------------------------
-        final = cv2.medianBlur(output, 5)
+        final = cv2.medianBlur(output, 3)
 
     elif fltr_type == 'GRAY_HSV':
         # -----Converting to GRAY color space----------------------------------------
         gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
         # -----Converting to HSV color space-----------------------------------------
         final = cv2.cvtColor(gray, cv2.COLOR_BGR2HSV)
+    elif fltr_type == 'SHARPEN':
+        img = Image.fromarray(cv2.cvtColor(output, cv2.COLOR_BGR2RGB))
+        pil_img = img.filter(ImageFilter.SHARPEN)
+        final = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
+    elif fltr_type == 'kernel':
+        kernel3 = np.array([[0, -1, 0],
+                            [-1, 5, -1],
+                            [0, -1, 0]])
+        final = cv2.filter2D(src=output, ddepth=-1, kernel=kernel3)
+
+
     else:
         final = output
 

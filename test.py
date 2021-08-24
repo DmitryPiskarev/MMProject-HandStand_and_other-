@@ -9,13 +9,10 @@ import cv2
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 img_root = os.path.join(BASE_DIR, 'media/good_img')
 
-
 # Dima dont touch! ONLY COMMENT!!!!!  :))
 mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
 # mmpose_dir = '/home/dmitriy/mmcv/mmpose'
 my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
-
-
 
 # f_root = os.path.join(BASE_DIR, 'media/filtered')
 # img_out = os.path.join(BASE_DIR, 'media/out_img')
@@ -26,9 +23,8 @@ img_out = os.path.join(my_dir, 'media/out_img')
 img = 'tst_img1.png'
 
 # filter to test
-ftypes = {99: 'NO', 0: 'CLAHE', 1: 'GRAY', 2: 'MEDIANBLUR', 3: 'GRAY_HSV'}
-ft = 2
-
+ftypes = {99: 'NO', 0: 'CLAHE', 1: 'GRAY', 2: 'MEDIANBLUR', 3: 'GRAY_HSV', 4: 'SHARPEN', 5: 'kernel'}
+ft = 99
 img_new = resized_and_filtered([mmpose_dir, img_root, img, f_root], ftypes[ft])
 
 # data = [[91.063324, 272.36313, 0.8157366],
@@ -57,7 +53,7 @@ thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015],  # Median
 # ac_thr_wes = 0.150 ac_thr_wsh = 0.037 ac_thr_wsk = 0.019 ac_thr_shk = 0.026
 # ac_thr_hka = 0.027 ac_thr_wha = 0.018
 
-ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['conservative']
+ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['week']
 
 # retrieve data from mmpose
 mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, f_root, img_new, img_out])
