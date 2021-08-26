@@ -6,13 +6,15 @@ from filters import *
 from PIL import Image
 import cv2
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+# BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+BASE_DIR = os.getcwd() # Может так?
 img_root = os.path.join(BASE_DIR, 'media/good_img')
 
 # Dima dont touch! ONLY COMMENT!!!!!  :))
-mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
-# mmpose_dir = '/home/dmitriy/mmcv/mmpose'
-my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
+# mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
+mmpose_dir = '/home/dmitriy/mmcv/mmpose'
+# my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
+my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
 
 # f_root = os.path.join(BASE_DIR, 'media/filtered')
 # img_out = os.path.join(BASE_DIR, 'media/out_img')
@@ -20,30 +22,25 @@ my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
 f_root = os.path.join(my_dir, 'media/filtered')
 img_out = os.path.join(my_dir, 'media/out_img')
 
-img = 'tst_img1.png'
+img = 'tst_img2.png'
 
 # filter to test
-ftypes = {99: 'NO', 0: 'CLAHE', 1: 'GRAY', 2: 'MEDIANBLUR', 3: 'GRAY_HSV', 4: 'SHARPEN', 5: 'kernel'}
-ft = 99
-img_new = resized_and_filtered([mmpose_dir, img_root, img, f_root], ftypes[ft])
+ftypes = {99: 'NO', 0: 'CLAHE', 1: 'GRAY', 2: 'MEDIANBLUR_NG', 3: 'HSV', 4: 'SHARPEN', 5: 'SHARPEN2', 
+          6: 'SHARPEN2_NG', 7: 'EMBOSS', 8: 'VLINE', 9: 'AVERAGE', 10: 'AVERAGE_NG', 11: 'GAUSSIAN_BLUR', 
+          12: 'GAUSSIAN_BLUR_NG', 13: 'BILATERAL', 14: 'BILATERAL_NG', 15: 'AVERAGE_SHARP', 
+          16: 'AVERAGE_SHARP_BILATERAL', 17: 'MEDIANBLUR', 18: 'TRUNC', 19: 'PURE_BC', 20: 'BC_TRUNC', 
+          21: 'TRUNC_NG', 22: 'WB', 23: 'WB_TRUNC', 24: 'WB_TRUNC_NG', 25: 'THRESH_TOZERO',
+          26: 'THRESH_TOZERO_NG', 27: 'GB_TRUNC', 28: 'GB_WB_TRUNC', 29: 'SH2_TRUNC', 30: 'SH2_MB_TRUNC'}
+ft = 30
+### for tst_img5 - 18, 11, 9 and 5 made a good job
+### for the
+resize = 500 # Set False to prevent resizing
+smooth = 3 # an additional numerical parameter like the smooth factor in the MEDIANBLUR
+alpha = 1.0 # Simple contrast control
+beta = 0    # Simple brightness control
 
-# data = [[91.063324, 272.36313, 0.8157366],
-#         [84.76651, 272.36313, 0.8523694],
-#         [91.063324, 278.65994, 0.79907167],
-#         [84.76651, 266.0663, 0.8775567],
-#         [97.36014, 272.36313, 0.6498351],
-#         [94.21173, 247.17587, 0.6690098],
-#         [106.805374, 262.9179, 0.7052514],
-#         [97.36014, 291.2536, 0.56708306],
-#         [97.36014, 291.2536, 0.86998916],
-#         [97.36014, 332.18292, 0.68419474],
-#         [94.21173, 332.18292, 0.82392687],
-#         [97.36014, 168.4657, 0.6219564],
-#         [103.65695, 168.4657, 0.67523414],
-#         [103.65695, 105.49753, 0.7835887],
-#         [103.65695, 105.49753, 0.68537617],
-#         [103.65695, 48.82617, 0.6098028],
-#         [106.805374, 51.97458, 0.5526638]]
+img_new = resized_and_filtered([mmpose_dir, img_root, img, f_root], ftypes[ft], 
+                               resize, smooth, alpha, beta)
 
 thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015],  # Median
               'conservative': [0.2, 0.06, 0.034, 0.048, 0.064, 0.031],  # Median + Standard deviation
