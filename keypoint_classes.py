@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def angle(pnt):
     """Angle bw two cartesian vectors"""
     a = np.array(pnt[0])
@@ -42,6 +43,8 @@ class AngleCheck:
                                'first_elbow', 'second_elbow', 'first_wrist', 'second_wrist', 'first_ass',
                                'second_ass', 'first_knee', 'second_knee', 'first_foot', 'second_foot']
         self.list_of_angles = []
+        self.flag = True
+        self.dict_of_angles = {}
 
     def get_ang_res(self, f_point, s_point, t_point, func, accept_threshold=0.10, plot=False):
 
@@ -82,7 +85,7 @@ class AngleCheck:
                 f"WHA angle {self.get_ang_res(kpnts['first_wrist'], kpnts['first_ass'], kpnts['first_foot'], accept180, thr[5])}")
 
             # while res are important develop
-            dict_of_angles = {
+            self.dict_of_angles = {
                 'WES angle': [self.list_of_angles[0],
                               self.get_ang_res(kpnts['first_wrist'], kpnts['first_elbow'], kpnts['first_shoulder'],
                                                accept180, thr[0])],
@@ -105,9 +108,13 @@ class AngleCheck:
                                                thr[5])],
 
             }
+            for x in self.dict_of_angles.values():
+                if int(x[1][1]) > 40:
+                    self.flag = False
+            # print(dict_of_angles)
+
             #             with open("angeles.txt", "a") as file:
             #                 file.write(f'{dict_of_angles}\n\n')
             #                 file.close()
-            print(dict_of_angles)
         else:
             print('wrong input')

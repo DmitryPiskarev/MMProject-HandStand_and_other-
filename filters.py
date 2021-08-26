@@ -2,6 +2,8 @@ import cv2
 import os
 from PIL import ImageFilter, Image
 import numpy as np
+from varname import nameof
+
 
 def extract_lines(path, write=False, vline=True):
     """
@@ -20,11 +22,11 @@ def extract_lines(path, write=False, vline=True):
     # Morphological opening
     mask1 = cv2.morphologyEx(img, cv2.MORPH_OPEN, horizontalStructure)
     mask2 = cv2.morphologyEx(img, cv2.MORPH_OPEN, verticalStructure)
-    
+
     if write:
         cv2.imwrite(os.path.join(path[0], path[3], '{}_{}'.format(nameof(mask1), path[2])), mask1)
         cv2.imwrite(os.path.join(path[0], path[3], '{}_{}'.format(nameof(mask2), path[2])), mask2)
-    
+
     if vline:
         return mask2, '{}_{}'.format(nameof(mask2), path[2])
     else:
@@ -36,8 +38,8 @@ def bc_adjustment(image, a, b):
     for y in range(image.shape[0]):
         for x in range(image.shape[1]):
             for c in range(image.shape[2]):
-                new_image[y,x,c] = np.clip(a*image[y,x,c] + b, 0, 255)
-                
+                new_image[y, x, c] = np.clip(a * image[y, x, c] + b, 0, 255)
+
     return new_image
 
 
@@ -54,8 +56,8 @@ def white_balance_loops(img):
             result[x, y, 2] = b - ((avg_b - 128) * (l / 100.0) * 1.1)
     result = cv2.cvtColor(result, cv2.COLOR_LAB2BGR)
     return result
-    
-    
+
+
 def resized_and_filtered(dirs, fltr_type, max_image_height, smooth, alpha, beta):
     """
     - dirs is a list of directories in the followinf order:
@@ -68,10 +70,10 @@ def resized_and_filtered(dirs, fltr_type, max_image_height, smooth, alpha, beta)
                np.array([[-2, -1, 0],
                          [-1, 1, 1],
                          [0, 1, 2]]),
-               np.ones((5,5),np.float32)/25]
-    
+               np.ones((5, 5), np.float32) / 25]
+
     src = cv2.imread(os.path.join(dirs[0], dirs[1], dirs[2]), cv2.IMREAD_UNCHANGED)
-    
+
     if max_image_height:
         # percent by which the image is resized
         scale_pct = float(max_image_height / src.shape[0])
@@ -106,130 +108,130 @@ def resized_and_filtered(dirs, fltr_type, max_image_height, smooth, alpha, beta)
     elif fltr_type == 'MEDIANBLUR':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         final = cv2.medianBlur(image, smooth)
-        
+
     elif fltr_type == 'MEDIANBLUR_NG':
-        final = cv2.medianBlur(output, param1)
+        final = cv2.medianBlur(output, smooth)
 
     elif fltr_type == 'GRAY_HSV':
-        final = cv2.cvtColor(gray, cv2.COLOR_BGR2HSV)
-        
+        final = cv2.cvtColor(output, cv2.COLOR_BGR2HSV)
+
     elif fltr_type == 'HSV':
         final = cv2.cvtColor(output, cv2.COLOR_BGR2HSV)
-        
+
     elif fltr_type == 'SHARPEN':
         img = Image.fromarray(cv2.cvtColor(output, cv2.COLOR_BGR2RGB))
         pil_img = img.filter(ImageFilter.SHARPEN)
         final = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
-        
+
     elif fltr_type == 'SHARPEN2':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         kernel = kernels[0]
         final = cv2.filter2D(image, -1, kernel)
-        
-    elif fltr_type == 'SHARPEN2_NG': # NG means NO GRAY
+
+    elif fltr_type == 'SHARPEN2_NG':  # NG means NO GRAY
         kernel3 = kernels[0]
         final = cv2.filter2D(src=output, ddepth=-1, kernel=kernel3)
-    
+
     elif fltr_type == 'EMBOSS':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         kernel = kernels[1]
         final = cv2.filter2D(image, -1, kernel)
-    
+
     elif fltr_type == 'VLINE':
         final = extract_lines(dirs, vline=True)[0]
-        
+
     elif fltr_type == 'AVERAGE':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         kernel = kernels[2]
-        final = cv2.filter2D(image,-1,kernel)
-        
+        final = cv2.filter2D(image, -1, kernel)
+
     elif fltr_type == 'AVERAGE_NG':
         kernel = kernels[2]
         final = cv2.filter2D(output, -1, kernel)
-        
+
     elif fltr_type == 'AVERAGE_SHARP':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         final = cv2.filter2D(image, -1, kernels[2])
         final = cv2.filter2D(final, -1, kernels[0])
-        
+
     elif fltr_type == 'GAUSSIAN_BLUR':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
-        final = cv2.GaussianBlur(image,(5,5),0)
-        
+        final = cv2.GaussianBlur(image, (5, 5), 0)
+
     elif fltr_type == 'GAUSSIAN_BLUR_NG':
-        final = cv2.GaussianBlur(output,(5,5),0)
-        
+        final = cv2.GaussianBlur(output, (5, 5), 0)
+
     elif fltr_type == 'BILATERAL':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
-        final = cv2.bilateralFilter(image,9,75,75)
-        
+        final = cv2.bilateralFilter(image, 9, 75, 75)
+
     elif fltr_type == 'BILATERAL_NG':
-        final = cv2.bilateralFilter(output,9,75,75)
-        
+        final = cv2.bilateralFilter(output, 9, 75, 75)
+
     elif fltr_type == 'AVERAGE_SHARP_BILATERAL':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         final = cv2.filter2D(image, -1, kernels[2])
         final = cv2.filter2D(final, -1, kernels[0])
-        final = cv2.bilateralFilter(final,9,75,75)
-        
+        final = cv2.bilateralFilter(final, 9, 75, 75)
+
     elif fltr_type == 'TRUNC':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TRUNC)
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+
     elif fltr_type == 'TRUNC_NG':
-        _,final = cv2.threshold(output,127,255,cv2.THRESH_TRUNC)
-        
+        _, final = cv2.threshold(output, 127, 255, cv2.THRESH_TRUNC)
+
     elif fltr_type == 'PURE_BC':
         final = bc_adjustment(output, alpha, beta)
-        
+
     elif fltr_type == 'BC_TRUNC':
         image = bc_adjustment(output, alpha, beta)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TRUNC)
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+
     elif fltr_type == 'WB':
         final = white_balance_loops(output)
-        
+
     elif fltr_type == 'WB_TRUNC':
         final = white_balance_loops(output)
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TRUNC)
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+
     elif fltr_type == 'WB_TRUNC_NG':
         image = white_balance_loops(output)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TRUNC)
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+
     elif fltr_type == 'THRESH_TOZERO':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TOZERO)
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TOZERO)
+
     elif fltr_type == 'THRESH_TOZERO_NG':
-        _,final = cv2.threshold(output,127,255,cv2.THRESH_TOZERO)
-        
+        _, final = cv2.threshold(output, 127, 255, cv2.THRESH_TOZERO)
+
     elif fltr_type == 'GB_TRUNC':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
-        image = cv2.GaussianBlur(image,(5,5),0)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TOZERO)
-        
+        image = cv2.GaussianBlur(image, (5, 5), 0)
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TOZERO)
+
     elif fltr_type == 'GB_WB_TRUNC':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
-        image = cv2.GaussianBlur(image,(5,5),0)
+        image = cv2.GaussianBlur(image, (5, 5), 0)
         image = white_balance_loops(image)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TOZERO)
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TOZERO)
+
     elif fltr_type == 'SH2_TRUNC':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         kernel = kernels[0]
         image = cv2.filter2D(image, -1, kernel)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TRUNC)
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+
     elif fltr_type == 'SH2_MB_TRUNC':
         image = cv2.cvtColor(output, cv2.COLOR_BGR2RGB)
         kernel = kernels[0]
         image = cv2.filter2D(image, -1, kernel)
         image = cv2.medianBlur(image, smooth)
-        _,final = cv2.threshold(image,127,255,cv2.THRESH_TRUNC)
-        
-        
+        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+
+
     else:
         final = output
 
