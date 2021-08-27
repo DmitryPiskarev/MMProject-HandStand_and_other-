@@ -6,17 +6,17 @@ from filters import *
 from PIL import Image
 import cv2
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-# BASE_DIR = os.getcwd() # Может так?
+# BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+BASE_DIR = os.getcwd() # Может так?
 img_root = os.path.join(BASE_DIR, 'media/good_img')
 # img_root = os.path.join(BASE_DIR, 'media/img_from_video/user1')
 
 # Dima dont touch! ONLY COMMENT!!!!!  :))
-mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
-my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
+# mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
+# my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
 
-# mmpose_dir = '/home/dmitriy/mmcv/mmpose'
-# my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
+mmpose_dir = '/home/dmitriy/mmcv/mmpose'
+my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
 
 # f_root = os.path.join(BASE_DIR, 'media/filtered')
 # img_out = os.path.join(BASE_DIR, 'media/out_img')
@@ -40,15 +40,12 @@ def get_img_rezult(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir)
     
     apply_following = [fltrs[1], fltrs[2], fltrs[4],  fltrs[5]]
     
-    
-    ### for tst_img5 - 18, 11, 9 and 5 made a good job
-    ### for the
     resize = 500  # Set False to prevent resizing
     smooth = 3  # an additional numerical parameter like the smooth factor in the MEDIANBLUR
     alpha = 1.0  # Simple contrast control
     beta = 0  # Simple brightness control
 
-    img_new = resized_and_filtered([mmpose_root, img_root_dir, img_name, f_root_dir], fltrs,
+    img_new = resized_and_filtered([mmpose_root, img_root_dir, img_name, f_root_dir], apply_following,
                                    resize, smooth, alpha, beta)
 
     thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015],  # Median
@@ -62,7 +59,8 @@ def get_img_rezult(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir)
     ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['week']
 
     # retrieve data from mmpose
-    mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, f_root_dir, img_new, img_out_dir])
+    mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, f_root_dir, 
+                                                      img_new, img_out_dir])
 
     string_mm = mmpose_out_dataset_str.decode()
     arr_of_strings = string_mm.replace("\n", "").replace(" ", "").split("}")

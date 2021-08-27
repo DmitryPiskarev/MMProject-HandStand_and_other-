@@ -11,7 +11,7 @@ def resize_img(img, max_image_height):
     height = int(img.shape[0] * scale_pct)
     dsize = (width, height)
     
-    return cv2.resize(img, dsize)
+    return cv2.resize(img, dsize), round(scale_pct*100, 0)
 
 class Filtering:
     def __init__(self, img, ftype, path, smooth=3, alpha=1.0, beta=0):
@@ -180,7 +180,7 @@ class Filtering:
 
         return res
 
-def resized_and_filtered(dirs, fltrs, max_image_height, smooth=3, alpha=1.0, beta=0):
+def resized_and_filtered(dirs, filtres, max_image_height, smooth=3, alpha=1.0, beta=0):
     """
     - dirs is a list of directories in the followinf order:
         mmpose_dir, img_root, img, filtered_root
@@ -194,22 +194,22 @@ def resized_and_filtered(dirs, fltrs, max_image_height, smooth=3, alpha=1.0, bet
     
     ### Resize
     if max_image_height:
-        output = resize_img(src, max_image_height)
+        output, scale_pct = resize_img(src, max_image_height)
     else:
         scale_pct = 'no'
         output = src
     ###
     
-    output = Filtering(output, fltrs[0], dirs).apply_filter()
-    for i in range(1, len(fltrs)):
-        output = Filtering(output, fltrs[i], dirs).apply_filter()
+    output = Filtering(output, filtres[0], dirs).apply_filter()
+    for i in range(1, len(filtres)):
+        output = Filtering(output, filtres[i], dirs).apply_filter()
 #         cv2.imshow(str(i), new)
 #         cv2.waitKey(0)
 #     cv2.destroyAllWindows()
     
-    out_name = '{}_{}_{}.png'.format(dirs[2].split('.')[0], scale_pct, "_".join(fltrs))
-    if not cv2.imwrite(os.path.join(dirs[0], dirs[3], '{}'.format(out_name)), final):
+    out_name = '{}_{}_{}.png'.format(dirs[2].split('.')[0], scale_pct, "_".join(filtres))
+    if not cv2.imwrite(os.path.join(dirs[0], dirs[3], '{}'.format(out_name)), output):
         raise Exception("Could not write image")
 #     else:
 #         cv2.imwrite(os.path.join(dirs[0], dirs[3], '{}'.format(out_name)), final)
-    return output
+    return out_name
