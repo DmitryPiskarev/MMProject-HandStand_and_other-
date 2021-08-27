@@ -6,17 +6,17 @@ from filters import *
 from PIL import Image
 import cv2
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-# BASE_DIR = os.getcwd() # Может так?
+# BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+BASE_DIR = os.getcwd() # Может так?
 img_root = os.path.join(BASE_DIR, 'media/good_img')
 # img_root = os.path.join(BASE_DIR, 'media/img_from_video/user1')
 
 # Dima dont touch! ONLY COMMENT!!!!!  :))
-mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
-my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
+# mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
+# my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
 
-# mmpose_dir = '/home/dmitriy/mmcv/mmpose'
-# my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
+mmpose_dir = '/home/dmitriy/mmcv/mmpose'
+my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
 
 # f_root = os.path.join(BASE_DIR, 'media/filtered')
 # img_out = os.path.join(BASE_DIR, 'media/out_img')
@@ -28,24 +28,24 @@ img = 'tst_img1.png'
 array_of_results = []
 
 
-def get_img_rezult(img_name, img_root_dir, f_root_dir, img_out_dir):
+def get_img_rezult(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir):
     rez = {}
     # filter to test
-    ftypes = {99: 'NO', 0: 'CLAHE', 1: 'GRAY', 2: 'MEDIANBLUR_NG', 3: 'HSV', 4: 'SHARPEN', 5: 'SHARPEN2',
-              6: 'SHARPEN2_NG', 7: 'EMBOSS', 8: 'VLINE', 9: 'AVERAGE', 10: 'AVERAGE_NG', 11: 'GAUSSIAN_BLUR',
-              12: 'GAUSSIAN_BLUR_NG', 13: 'BILATERAL', 14: 'BILATERAL_NG', 15: 'AVERAGE_SHARP',
-              16: 'AVERAGE_SHARP_BILATERAL', 17: 'MEDIANBLUR', 18: 'TRUNC', 19: 'PURE_BC', 20: 'BC_TRUNC',
-              21: 'TRUNC_NG', 22: 'WB', 23: 'WB_TRUNC', 24: 'WB_TRUNC_NG', 25: 'THRESH_TOZERO',
-              26: 'THRESH_TOZERO_NG', 27: 'GB_TRUNC', 28: 'GB_WB_TRUNC', 29: 'SH2_TRUNC', 30: 'SH2_MB_TRUNC'}
-    ft = 99
-    ### for tst_img5 - 18, 11, 9 and 5 made a good job
-    ### for the
+    
+    fltrs = {0:'GRAY', 1:'WB', 2:'BC', 3:'HSV', 4:'SHARPEN', 5:'MEDIANBLUR', 
+             6:'AVERAGE', 7:'GAUSSIAN_BLUR', 8:'TRUNC', 9:'CLAHE', 10:'BILATERAL',
+             11:'THRESH_TOZERO', 12:'VLINE', 13:'EMBOSS', 14:'BGR2RGB'}
+    
+    "NOTE: WB is not applicable for gray scale image! Please, keep appropriate order of filters."
+    
+    apply_following = [fltrs[1], fltrs[2], fltrs[4],  fltrs[5]]
+    
     resize = 500  # Set False to prevent resizing
     smooth = 3  # an additional numerical parameter like the smooth factor in the MEDIANBLUR
     alpha = 1.0  # Simple contrast control
     beta = 0  # Simple brightness control
 
-    img_new = resized_and_filtered([mmpose_dir, img_root_dir, img_name, f_root_dir], ftypes[ft],
+    img_new = resized_and_filtered([mmpose_root, img_root_dir, img_name, f_root_dir], apply_following,
                                    resize, smooth, alpha, beta)
 
     thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015],  # Median
@@ -59,7 +59,8 @@ def get_img_rezult(img_name, img_root_dir, f_root_dir, img_out_dir):
     ac_thr_wes, ac_thr_wsh, ac_thr_wsk, ac_thr_shk, ac_thr_hka, ac_thr_wha = thresholds['week']
 
     # retrieve data from mmpose
-    mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, f_root_dir, img_new, img_out_dir])
+    mmpose_out_dataset_str = subprocess.check_output(["./subscript", mmpose_dir, f_root_dir, 
+                                                      img_new, img_out_dir])
 
     string_mm = mmpose_out_dataset_str.decode()
     arr_of_strings = string_mm.replace("\n", "").replace(" ", "").split("}")
@@ -94,8 +95,12 @@ def get_img_rezult(img_name, img_root_dir, f_root_dir, img_out_dir):
         print(string_mm)
         return rez
 
+d = get_img_rezult(mmpose_root=mmpose_dir, 
+                   img_name=img, 
+                   img_root_dir=img_root, 
+                   f_root_dir=f_root, 
+                   img_out_dir=img_out)
 
-d = get_img_rezult(img_name=img, img_root_dir=img_root, f_root_dir=f_root, img_out_dir=img_out)
 print(f"++++++{d}")
 
 ## For all img of user
