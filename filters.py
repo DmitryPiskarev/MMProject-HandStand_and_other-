@@ -101,33 +101,33 @@ class Filtering:
         return cv2.filter2D(self.img, -1, self.kernels[0])
 
     def emboss(self):
-        image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-        return cv2.filter2D(image, -1, self.kernels[1])
+#         image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        return cv2.filter2D(self.img, -1, self.kernels[1])
 
     def avg(self):
-        image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-        return cv2.filter2D(image, -1, self.kernels[2])
+#         image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        return cv2.filter2D(self.img, -1, self.kernels[2])
 
     def bilateral(self):
-        image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-        return cv2.bilateralFilter(image, 9, 75, 75)
+#         image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        return cv2.bilateralFilter(self.img, 9, 75, 75)
 
     def trunc(self):
-        image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TRUNC)
+#         image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        _, final = cv2.threshold(self.img, 127, 255, cv2.THRESH_TRUNC)
         return final
 
     def threstozero(self):
-        image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-        _, final = cv2.threshold(image, 127, 255, cv2.THRESH_TOZERO)
+#         image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        _, final = cv2.threshold(self.img, 127, 255, cv2.THRESH_TOZERO)
         return final
 
     def hcv(self):
         return cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
 
     def gblur(self):
-        image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-        return cv2.GaussianBlur(image, (5, 5), 0)
+#         image = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        return cv2.GaussianBlur(self.img, (5, 5), 0)
 
     def apply_filter(self):
         if self.ftype == 'CLAHE':
@@ -200,12 +200,10 @@ def resized_and_filtered(dirs, filtres, max_image_height, smooth=3, alpha=1.0, b
         output = src
     ###
     
-    output = Filtering(output, filtres[0], dirs).apply_filter()
-    for i in range(1, len(filtres)):
-        output = Filtering(output, filtres[i], dirs).apply_filter()
-#         cv2.imshow(str(i), new)
-#         cv2.waitKey(0)
-#     cv2.destroyAllWindows()
+    if filtres: 
+        output = Filtering(output, filtres[0], dirs).apply_filter()
+        for i in range(1, len(filtres)):
+            output = Filtering(output, filtres[i], dirs).apply_filter()
     
     out_name = '{}_{}_{}.png'.format(dirs[2].split('.')[0], scale_pct, "_".join(filtres))
     if not cv2.imwrite(os.path.join(dirs[0], dirs[3], '{}'.format(out_name)), output):

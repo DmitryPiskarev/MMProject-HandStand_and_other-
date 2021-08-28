@@ -6,6 +6,14 @@ from filters import *
 from PIL import Image
 import cv2
 
+import subprocess
+import re
+import os
+from keypoint_classes import AngleCheck
+from filters import *
+from PIL import Image
+import cv2
+
 # BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 BASE_DIR = os.getcwd() # Может так?
 img_root = os.path.join(BASE_DIR, 'media/good_img')
@@ -24,21 +32,23 @@ my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
 f_root = os.path.join(my_dir, 'media/filtered')
 img_out = os.path.join(my_dir, 'media/out_img')
 
-img = 'tst_img1.png'
+img = 'tst_img6.png'
 array_of_results = []
 
 
-def get_img_rezult(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir):
-    rez = {}
-    # filter to test
+def get_img_result(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir, plot_all=True, plot_res=True):
+    assert (plot_all+plot_res) <= 1, 'plot_all and plot_res cannot be set to True simultaneously'
     
+    rez = {}
+    # filter list
     fltrs = {0:'GRAY', 1:'WB', 2:'BC', 3:'HSV', 4:'SHARPEN', 5:'MEDIANBLUR', 
              6:'AVERAGE', 7:'GAUSSIAN_BLUR', 8:'TRUNC', 9:'CLAHE', 10:'BILATERAL',
              11:'THRESH_TOZERO', 12:'VLINE', 13:'EMBOSS', 14:'BGR2RGB'}
     
     "NOTE: WB is not applicable for gray scale image! Please, keep appropriate order of filters."
     
-    apply_following = [fltrs[1], fltrs[2], fltrs[4],  fltrs[5]]
+    apply_following = [fltrs[1], fltrs[4], fltrs[7]]
+#     apply_following = []
     
     resize = 500  # Set False to prevent resizing
     smooth = 3  # an additional numerical parameter like the smooth factor in the MEDIANBLUR
@@ -84,22 +94,30 @@ def get_img_rezult(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir)
             if result.flag:
                 rez = result.dict_of_angles
                 break
-        img_in = Image.open(f'{img_root_dir}/{img_name}')
-        img_in_f = Image.open(f'{f_root_dir}/{img_new}')
-        img_out = Image.open(f'{img_out_dir}/vis_{img_new}')
-        img_in.show()
-        img_in_f.show()
-        img_out.show()
+        if plot_all:
+            img_in = Image.open(f'{img_root_dir}/{img_name}')
+            img_in_f = Image.open(f'{f_root_dir}/{img_new}')
+            img_out = Image.open(f'{img_out_dir}/vis_{img_new}')
+            img_in.show()
+            img_in_f.show()
+            img_out.show()
+        elif plot_res:
+            img_out = Image.open(f'{img_out_dir}/vis_{img_new}')
+            img_out.show()\
+            
         return rez
+        
     else:
         print(string_mm)
         return rez
 
-d = get_img_rezult(mmpose_root=mmpose_dir, 
+d = get_img_result(mmpose_root=mmpose_dir, 
                    img_name=img, 
                    img_root_dir=img_root, 
                    f_root_dir=f_root, 
-                   img_out_dir=img_out)
+                   img_out_dir=img_out,
+                   plot_all=True,
+                   plot_res=False)
 
 print(f"++++++{d}")
 
