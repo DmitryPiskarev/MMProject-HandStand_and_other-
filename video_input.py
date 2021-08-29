@@ -1,8 +1,8 @@
 import cv2
 
 KPS = 1  # Target Keyframes Per Second
-VIDEO_PATH = "media/video/cuted_video.mp4"  # "path/to/video/folder" # Change this
-IMAGE_PATH = "media/img_from_video/user1/img"  # "path/to/image/folder" # ...and this
+VIDEO_PATH = "media/video/vis5.mp4"  # "path/to/video/folder" # Change this
+IMAGE_PATH = "media/img_from_video/user5/img"  # "path/to/image/folder" # ...and this
 EXTENSION = ".png"
 cap = cv2.VideoCapture(VIDEO_PATH)
 fps = round(cap.get(cv2.CAP_PROP_FPS))
