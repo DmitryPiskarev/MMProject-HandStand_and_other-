@@ -108,8 +108,9 @@ class AngleCheck:
                                                thr[5])],
 
             }
+
             for x in self.dict_of_angles.values():
-                if int(x[1][1]) > 40:
+                if int(x[1][1]) > 40 or kpnts['head0'][1] < kpnts['first_ass'][1]:
                     self.flag = False
             # print(dict_of_angles)
 

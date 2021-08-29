@@ -9,7 +9,7 @@ import cv2
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 # BASE_DIR = os.getcwd()  # Может так?
-img_root = os.path.join(BASE_DIR, 'media/img_from_video/user5')
+img_root = os.path.join(BASE_DIR, 'media/img_from_video/user4')
 # img_root = os.path.join(BASE_DIR, 'media/img_from_video/user1')
 
 # Dima dont touch! ONLY COMMENT!!!!!  :))
@@ -25,7 +25,7 @@ my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
 f_root = os.path.join(my_dir, 'media/filtered')
 img_out = os.path.join(my_dir, 'media/out_img')
 
-img = 'img_3.png'
+img = 'img_4.png'
 array_of_results = []
 
 
@@ -50,9 +50,11 @@ def get_img_result(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir,
     apply_following = [fltrs[1], fltrs[16], fltrs[14]]  # Works good for bad-quality and monotonic images such as 18
     apply_following = [fltrs[1], fltrs[16], fltrs[14], fltrs[17]]  # Works perfectly for nearly all images
     apply_following = [fltrs[1], fltrs[16], fltrs[14], fltrs[17], fltrs[0]]  # Works perfectly 1, 2, 4, 5, 6
-    apply_following = [fltrs[1], fltrs[16]]
+
+    # apply_following = [fltrs[1], fltrs[16]]
+
     #     apply_following = [fltrs[1], fltrs[16], fltrs[0]]
-    #     apply_following = []
+    apply_following = []
 
     resize = False  # Set False to prevent resizing
     smooth = 3  # an additional numerical parameter like the smooth factor in the MEDIANBLUR
