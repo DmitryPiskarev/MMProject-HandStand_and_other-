@@ -1,14 +1,7 @@
 import subprocess
 import re
 import os
-from keypoint_classes import AngleCheck
-from filters import *
-from PIL import Image
-import cv2
-
-import subprocess
-import re
-import os
+import time
 from keypoint_classes import AngleCheck
 from filters import *
 from PIL import Image
@@ -32,9 +25,10 @@ my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
 f_root = os.path.join(my_dir, 'media/filtered')
 img_out = os.path.join(my_dir, 'media/out_img')
 
-img = 'tst_img6.png'
+img = 'tst_img18.png'
 array_of_results = []
 
+start_time = time.time()
 
 def get_img_result(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir, plot_all=True, plot_res=True):
     assert (plot_all+plot_res) <= 1, 'plot_all and plot_res cannot be set to True simultaneously'
@@ -43,20 +37,32 @@ def get_img_result(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir,
     # filter list
     fltrs = {0:'GRAY', 1:'WB', 2:'BC', 3:'HSV', 4:'SHARPEN', 5:'MEDIANBLUR', 
              6:'AVERAGE', 7:'GAUSSIAN_BLUR', 8:'TRUNC', 9:'CLAHE', 10:'BILATERAL',
-             11:'THRESH_TOZERO', 12:'VLINE', 13:'EMBOSS', 14:'BGR2RGB'}
+             11:'THRESH_TOZERO', 12:'VLINE', 13:'EMBOSS', 14:'BGR2RGB', 15: 'HSV2BGR',
+             16: 'SATURATION', 17: 'UNSHARP_MASK', 18: 'GRAY2RGB'}
     
-    "NOTE: WB is not applicable for gray scale image! Please, keep appropriate order of filters."
+    """
+    NOTE: WB is not applicable for GRAY/BGR2RGB scale image! Please, keep appropriate order of filters.
+          Basically, white balance should be the first filter to apply in the correction pipeline.
+          
+          Do not apply BC and SATURATION togther because they use the same alpha and beta parameters which can
+          result in inappropriate output image.
+    """
     
-    apply_following = [fltrs[1], fltrs[4], fltrs[7]]
+    apply_following = [fltrs[1], fltrs[16], fltrs[14]] # Works good for bad-quality and monotonic images such as 18
+    apply_following = [fltrs[1], fltrs[16], fltrs[14], fltrs[17]] # Works perfectly for nearly all images 
+    apply_following = [fltrs[1], fltrs[16], fltrs[14], fltrs[17], fltrs[0]] # Works perfectly 1, 2, 4, 5, 6
+    apply_following = [fltrs[1], fltrs[16]]
+#     apply_following = [fltrs[1], fltrs[16], fltrs[0]]
 #     apply_following = []
-    
-    resize = 500  # Set False to prevent resizing
+
+    resize = False  # Set False to prevent resizing
     smooth = 3  # an additional numerical parameter like the smooth factor in the MEDIANBLUR
-    alpha = 1.0  # Simple contrast control
-    beta = 0  # Simple brightness control
+    alpha = 1.1  # saturation control (1-remains unchanged)
+    beta = 0.99  # brightness control (1-remains unchanged)
+    sharp_profile = 0 # 0 or 3
 
     img_new = resized_and_filtered([mmpose_root, img_root_dir, img_name, f_root_dir], apply_following,
-                                   resize, smooth, alpha, beta)
+                                   resize, alpha, beta, sharp_profile, smooth)
 
     thresholds = {'strict': [0.150, 0.032, 0.018, 0.027, 0.026, 0.015],  # Median
                   'conservative': [0.2, 0.06, 0.034, 0.048, 0.064, 0.031],  # Median + Standard deviation
@@ -96,10 +102,10 @@ def get_img_result(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir,
                 break
         if plot_all:
             img_in = Image.open(f'{img_root_dir}/{img_name}')
-            img_in_f = Image.open(f'{f_root_dir}/{img_new}')
+#             img_in_f = Image.open(f'{f_root_dir}/{img_new}')
             img_out = Image.open(f'{img_out_dir}/vis_{img_new}')
             img_in.show()
-            img_in_f.show()
+#             img_in_f.show()
             img_out.show()
         elif plot_res:
             img_out = Image.open(f'{img_out_dir}/vis_{img_new}')
@@ -131,3 +137,4 @@ print(f"++++++{d}")
 #         get_img_rezult(img_name=imgname, img_root_dir=img_root, f_root_dir=f_root, img_out_dir=img_out))
 #
 # print(array_of_results)
+print("--- {}s seconds ---".format(round(time.time() - start_time, 2)))
