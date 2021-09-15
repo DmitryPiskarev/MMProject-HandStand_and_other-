@@ -10,7 +10,7 @@ def resize_img(img, max_image_height):
     width = int(img.shape[1] * scale_pct)
     height = int(img.shape[0] * scale_pct)
     dsize = (width, height)
-    
+
     return cv2.resize(img, dsize), round(scale_pct*100, 0)
 
 class Filtering:
@@ -60,7 +60,7 @@ class Filtering:
                 for c in range(self.img.shape[2]):
                     new_image[y, x, c] = np.clip(self.a * self.img[y, x, c] + self.b, 0, 255)
         return new_image
-    
+
     def unsharp_mask(self, kernel_size=(5, 5), sigma=1.0, amount=1.0, threshold=0):
         """Return a sharpened version of the image, using an unsharp mask."""
         blurred = cv2.GaussianBlur(self.img, kernel_size, sigma)
@@ -97,7 +97,7 @@ class Filtering:
 
     def gray(self):
         return cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
-    
+
     def bgr2rgb(self):
         return cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
 
@@ -141,16 +141,16 @@ class Filtering:
 
     def hsv2bgr(self):
         return cv2.cvtColor(self.img, cv2.COLOR_HSV2BGR)
-    
+
     def saturation(self):
         hsvImg = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
         hsvImg[...,1] = hsvImg[...,1]*self.a
         hsvImg[...,2] = hsvImg[...,2]*self.b
         return cv2.cvtColor(hsvImg,cv2.COLOR_HSV2BGR)
-    
+
     def gray2rgb(self):
         return cv2.cvtColor(self.img, cv2.COLOR_GRAY2RGB)
-        
+
 
     def apply_filter(self):
         if self.ftype == 'CLAHE':
@@ -158,7 +158,7 @@ class Filtering:
 
         elif self.ftype == 'GRAY':
             res = self.gray()
-            
+
         elif self.ftype == 'BGR2RGB':
             res = self.bgr2rgb()
 
@@ -197,19 +197,19 @@ class Filtering:
 
         elif self.ftype == 'THRESH_TOZERO':
             res = self.threstozero()
-            
+
         elif self.ftype == 'HSV2BGR':
             res = self.hsv2bgr()
-            
+
         elif self.ftype == 'SATURATION':
             res = self.saturation()
-            
+
         elif self.ftype == 'UNSHARP_MASK':
             res = self.unsharp_mask()
-            
+
         elif self.ftype == 'GRAY2RGB':
             res = self.gray2rgb()
-            
+
         else:
             res = self.img
 
@@ -226,7 +226,7 @@ def resized_and_filtered(dirs, filtres, max_image_height, alpha, beta, sharp_pro
     """
 
     src = cv2.imread(os.path.join(dirs[0], dirs[1], dirs[2]), cv2.IMREAD_UNCHANGED)
-    
+
     ### Resize
     if max_image_height:
         output, scale_pct = resize_img(src, max_image_height)
@@ -234,13 +234,14 @@ def resized_and_filtered(dirs, filtres, max_image_height, alpha, beta, sharp_pro
         scale_pct = 'no'
         output = src
     ###
-    
-    if filtres: 
+
+    if filtres:
         output = Filtering(output, filtres[0], dirs, alpha, beta, sharp_profile, smooth).apply_filter()
         for i in range(1, len(filtres)):
             output = Filtering(output, filtres[i], dirs, alpha, beta, sharp_profile, smooth).apply_filter()
-    
+
     out_name = '{}_{}_{}.png'.format(dirs[2].split('.')[0], scale_pct, "_".join(filtres))
+
     if not cv2.imwrite(os.path.join(dirs[0], dirs[3], '{}'.format(out_name)), output):
         raise Exception("Could not write image")
 #     else:

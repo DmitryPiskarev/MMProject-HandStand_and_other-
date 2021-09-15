@@ -9,13 +9,14 @@ import cv2
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 # BASE_DIR = os.getcwd()  # Может так?
+print(BASE_DIR)
 img_root = os.path.join(BASE_DIR, 'media/img_from_video/user4')
 # img_root = os.path.join(BASE_DIR, 'media/img_from_video/user1')
 
 # Dima dont touch! ONLY COMMENT!!!!!  :))
 mmpose_dir = '/home/kirill/PycharmProjects/MMproject/mmpose'
-my_dir = '/home/kirill/PycharmProjects/HandstandProject/'
-
+# my_dir = '/home/kirill/PycharmProjects/HandstandProject/MMProject-HandStand_and_other-'
+my_dir = BASE_DIR
 # mmpose_dir = '/home/dmitriy/mmcv/mmpose'
 # my_dir = '/home/dmitriy/MMProject-HandStand_and_other-'
 
@@ -29,7 +30,8 @@ img = 'img_4.png'
 array_of_results = []
 
 
-def get_img_result(mmpose_root, img_name, img_root_dir, f_root_dir, img_out_dir, plot_all=True, plot_res=True):
+def get_img_result(img_name, img_root_dir, f_root_dir, img_out_dir, mmpose_root=mmpose_dir, plot_all=True,
+                   plot_res=True):
     assert (plot_all + plot_res) <= 1, 'plot_all and plot_res cannot be set to True simultaneously'
 
     rez = {}
